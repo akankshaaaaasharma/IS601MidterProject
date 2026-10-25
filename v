@@ -1,0 +1,11 @@
+file:/home/akank/.gitconfig	user.name=akankshaaaaasharma
+file:/home/akank/.gitconfig	user.email=akanksha013.sharma@gmail.com
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=false
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	core.ignorecase=true
+file:.git/config	remote.origin.url=https://github.com/akankshaaaaasharma/IS601MidterProject.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
