@@ -140,6 +140,109 @@ class TestPower(BaseOperationTest):
         },
     }
 
+class TestModulus(BaseOperationTest):
+    operation_class = Modulus
+    valid_test_cases = {
+        "positive_numbers": {"a": "10", "b": "3", "expected": "1"},
+        "no_remainder": {"a": "10", "b": "5", "expected": "0"},
+        "negative_dividend": {"a": "-10", "b": "3", "expected": "-1"},
+        "negative_divisor": {"a": "10", "b": "-3", "expected": "1"},
+        "decimals": {"a": "5.5", "b": "2", "expected": "1.5"},
+        "zero_dividend": {"a": "0", "b": "5", "expected": "0"},
+    }
+    invalid_test_cases = {
+        "modulus_by_zero": {
+            "a": "5",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Modulus by zero is not allowed"
+        },
+    }
+
+
+class TestRoot(BaseOperationTest):
+    operation_class = Root
+    valid_test_cases = {
+        "square_root": {"a": "9", "b": "2", "expected": "3"},
+        "cube_root": {"a": "27", "b": "3", "expected": "3"},
+        "fourth_root": {"a": "16", "b": "4", "expected": "2"},
+        "decimal_root": {"a": "2.25", "b": "2", "expected": "1.5"},
+    }
+    invalid_test_cases = {
+        "negative_base": {
+            "a": "-9",
+            "b": "2",
+            "error": ValidationError,
+            "message": "Cannot calculate root of negative number"
+        },
+        "zero_root": {
+            "a": "9",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Zero root is undefined"
+        },
+    }
+
+class TestPercentage(BaseOperationTest):
+    operation_class = Percentage
+    valid_test_cases = {
+        "simple_fraction": {"a": "1", "b": "4", "expected": "25.00"},
+        "whole": {"a": "5", "b": "5", "expected": "100.00"},
+        "over_hundred": {"a": "10", "b": "5", "expected": "200.00"},
+        "rounds_down": {"a": "1", "b": "3", "expected": "33.33"},
+        "rounds_up": {"a": "2", "b": "3", "expected": "66.67"},
+        "decimals": {"a": "1.5", "b": "6", "expected": "25.00"},
+        "negative_numerator": {"a": "-1", "b": "4", "expected": "-25.00"},
+        "zero_numerator": {"a": "0", "b": "5", "expected": "0.00"},
+    }
+    invalid_test_cases = {
+        "divide_by_zero": {
+            "a": "5",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Division by zero is not allowed"
+        },
+    }
+
+
+class TestAbsDiff(BaseOperationTest):
+    operation_class = AbsDiff
+    valid_test_cases = {
+        "a_bigger": {"a": "5", "b": "3", "expected": "2"},
+        "b_bigger": {"a": "3", "b": "5", "expected": "2"},
+        "negative_numbers": {"a": "-5", "b": "-3", "expected": "2"},
+        "mixed_signs": {"a": "-5", "b": "3", "expected": "8"},
+        "equal_numbers": {"a": "5", "b": "5", "expected": "0"},
+        "decimals": {"a": "5.5", "b": "3.3", "expected": "2.2"},
+        "large_numbers": {
+            "a": "1e10",
+            "b": "1e9",
+            "expected": "9000000000"
+        },
+    }
+    invalid_test_cases = {}
+ 
+ 
+class TestIntDivision(BaseOperationTest):
+    operation_class = Int_Division
+    valid_test_cases = {
+        "exact_division": {"a": "6", "b": "2", "expected": "3"},
+        "with_remainder": {"a": "7", "b": "2", "expected": "3"},
+        "negative_numbers": {"a": "-6", "b": "-2", "expected": "3"},
+        "negative_dividend": {"a": "-7", "b": "2", "expected": "-3"},
+        "negative_divisor": {"a": "7", "b": "-2", "expected": "-3"},
+        "decimals": {"a": "7.5", "b": "2", "expected": "3"},
+        "smaller_than_divisor": {"a": "1", "b": "3", "expected": "0"},
+        "zero_dividend": {"a": "0", "b": "5", "expected": "0"},
+    }
+    invalid_test_cases = {
+        "divide_by_zero": {
+            "a": "5",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Division by zero is not allowed"
+        },
+    }
 
 
 

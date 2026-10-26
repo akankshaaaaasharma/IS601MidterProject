@@ -1,15 +1,14 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
-from email.mime import base
+
 from typing import Dict
 
 from app.exceptions import ValidationError
-import math
 
 
 class Operation(ABC):
     @abstractmethod
-    def execute(self, a: Decimal, b: Decimal) -> str:
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
         pass
 
     def validate_operands(self, a: Decimal, b: Decimal) -> None:
@@ -55,14 +54,14 @@ class Power(Operation):
 
     
 class Modulus(Operation):
-    def execute(self, a, b):
-        self.validate_operands(a, b)
-        return str(a % b)
-
-    def validate_operands(self, a, b):
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
         super().validate_operands(a, b)
         if b == 0:
-            raise ValueError("Modulus by zero is not allowed")
+            raise ValidationError("Modulus by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a % b
 
 class Root(Operation):
     def validate_operands(self, a: Decimal, b: Decimal) -> None:
@@ -77,28 +76,30 @@ class Root(Operation):
         return Decimal(pow(float(a), 1 / float(b)))
 
 class Percentage(Operation):
-    def validate_operands(self, a, b):
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
         super().validate_operands(a, b)
-        if b==0:
-            raise ValueError("Division by zero is not allowed")
-        
-    def execute(self, a, b):
-        result = a/b*100
-        return str(result.quantize(Decimal('1.00'))) + '%'        
+        if b == 0:
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return (a / b * 100).quantize(Decimal("0.01"))       
 
 class AbsDiff(Operation):
-    def execute(self, a, b):
-        return str(abs(a-b))
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return abs(a - b)
 
 class Int_Division(Operation):
-    def execute(self, a, b):
-        self.validate_operands(a,b)
-        return str(a//b)
-    
-    def validate_operands(self, a, b):
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
         super().validate_operands(a, b)
-        if b==0:
-            raise ValueError("Division by zero is not allowed")
+        if b == 0:
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a // b
+
 
 class OperationFactory:
     _operations: Dict[str, type] = {
