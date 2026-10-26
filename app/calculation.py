@@ -32,7 +32,16 @@ class Calculation:
                 Decimal(pow(float(x), 1 / float(y))) 
                 if x >= 0 and y != 0 
                 else self._raise_invalid_root(x, y)
-            )
+            ),
+            "Modulus": lambda x, y: x % y if y != 0 else self._raise_mod_zero(),
+                        "Percentage": lambda x, y: (
+                (x / y * 100).quantize(Decimal("0.01"))
+                if y != 0
+                else self._raise_div_zero()
+            ),
+                        "AbsDiff": lambda x, y: abs(x - y),
+            "Int_Division": lambda x, y: x // y if y != 0 else self._raise_div_zero()
+
         }
 
         #operation retrieval
@@ -53,6 +62,10 @@ class Calculation:
     def _raise_neg_power():  # pragma: no cover
         raise OperationError("Negative exponents are not supported")
 
+    @staticmethod
+    def _raise_mod_zero():  # pragma: no cover
+        raise OperationError("Modulus by zero is not allowed")
+    
     @staticmethod
     def _raise_invalid_root(x: Decimal, y: Decimal):  # pragma: no cover
         if y == 0:
