@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 from decimal import Decimal
 from email.mime import base
 from typing import Dict
-#from app.exceptions import OperationError, UnknownOperationError, ValidationError
+
+from app.exceptions import ValidationError
 import math
+
 
 class Operation(ABC):
     @abstractmethod
@@ -101,4 +103,31 @@ class Int_Division(Operation):
     def validate_operands(self, a, b):
         super().validate_operands(a, b)
         if b==0:
-            raise ValidationError("Division by zero is not allowed")
+            raise ValueError("Division by zero is not allowed")
+
+class OperationFactory:
+    _operations: Dict[str, type] = {
+        'add': Addition,
+        'subtract': Subtraction,
+        'multiply': Multiplication,
+        'divide': Division,
+        'power': Power,
+        'root': Root,
+        'modulus': Modulus,
+        'percentage': Percentage,
+        'absdiff': AbsDiff,
+        'int_division': Int_Division
+    }
+
+    @classmethod
+    def register_operation(cls, name: str, operation_class: type) -> None:
+        if not issubclass(operation_class, Operation):
+            raise TypeError("Operation class must inherit from Operation")
+        cls._operations[name.lower()] = operation_class
+
+    @classmethod
+    def create_operation(cls, operation_type: str) -> Operation:
+        operation_class = cls._operations.get(operation_type.lower())
+        if not operation_class:
+            raise ValueError(f"Unknown operation: {operation_type}")
+        return operation_class()
