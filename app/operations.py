@@ -19,31 +19,40 @@ class Operation(ABC):
         return self.__class__.__name__
 
 class Addition(Operation):
-    def execute(self, a, b):
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
         self.validate_operands(a, b)
-        return str(a + b)
+        return a + b
 
 class Subtraction(Operation):
-    def execute(self, a, b):
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
         self.validate_operands(a, b)
-        return str(a - b)
+        return a - b
 
 class Multiplication(Operation):
-    def execute(self, a, b):
-        return str(a * b)
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a * b
 
 class Division(Operation):
-    def execute(self, a, b):
-        self.validate_operands(a, b)
-        return str(a / b)
-
-    def validate_operands(self, a, b):
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+        super().validate_operands(a, b)
         if b == 0:
-            raise ValueError("Division by zero is not allowed")
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a / b
 
 class Power(Operation):
-    def execute(self, a, b):
-        return str(a**b)
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+        super().validate_operands(a, b)
+        if b < 0:
+            raise ValidationError("Negative exponents not supported")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return Decimal(pow(float(a), float(b)))
+
     
 class Modulus(Operation):
     def execute(self, a, b):
@@ -56,30 +65,16 @@ class Modulus(Operation):
             raise ValueError("Modulus by zero is not allowed")
 
 class Root(Operation):
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+        super().validate_operands(a, b)
+        if a < 0:
+            raise ValidationError("Cannot calculate root of negative number")
+        if b == 0:
+            raise ValidationError("Zero root is undefined")
+
     def execute(self, a: Decimal, b: Decimal) -> Decimal:
         self.validate_operands(a, b)
-        root_degree = float(a)
-
-        if a < 0 and root_degree % 2 != 0:
-            abs_base = abs(base)
-            result = math.pow(abs_base, 1 / root_degree)
-            return str(-result)
-
-        try:
-            result = math.pow(base, 1 / root_degree)
-            return str(result)
-        except ValueError as e:
-            raise ValueError(f"Error computing root: {e}")
-
-        def validate_operands(self, a: Decimal, b: Decimal) -> None:
-            if b == 0:
-                raise ValueError("Zero root is undefined")
-
-            if b % 1 != 0:
-                raise ValueError("Root degree must be an integer.")
-
-            if a < 0 and b % 2 == 0:
-                raise ValueError("Cannot calculate even root of a negative number")
+        return Decimal(pow(float(a), 1 / float(b)))
 
 class Percentage(Operation):
     def validate_operands(self, a, b):
