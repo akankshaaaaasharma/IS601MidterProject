@@ -9,8 +9,6 @@ from app.operations import OperationFactory
 def calculator_repl():
     try:
         calc = Calculator()
-
-        # Observers for logging and auto-saving history
         calc.add_observer(LoggingObserver())
         calc.add_observer(AutoSaveObserver(calc))
 
@@ -21,9 +19,8 @@ def calculator_repl():
                 command = input("\nEnter command: ").lower().strip()
 
                 if command == 'help':
-                    operations = ", ".join(OperationFactory.available_operations())
                     print("\nAvailable commands:")
-                    print(f"  {operations} - Perform calculations")
+                    print("  add, subtract, multiply, divide, power, root - Perform calculations")
                     print("  history - Show calculation history")
                     print("  clear - Clear calculation history")
                     print("  undo - Undo the last calculation")
@@ -87,7 +84,7 @@ def calculator_repl():
                         print(f"Error loading history: {e}")
                     continue
 
-                if command in OperationFactory.available_operations():
+                if command in ['add', 'subtract', 'multiply', 'divide', 'power', 'root']:
                     try:
                         print("\nEnter numbers (or 'cancel' to abort):")
                         a = input("First number: ")
@@ -99,15 +96,14 @@ def calculator_repl():
                             print("Operation cancelled")
                             continue
 
+
                         operation = OperationFactory.create_operation(command)
                         calc.set_operation(operation)
+
                         result = calc.perform_operation(a, b)
 
-
                         if isinstance(result, Decimal):
-                            result = format(result.normalize(), 'f')
-                        if command == 'percentage':
-                            result = f"{result}%"
+                            result = result.normalize()
 
                         print(f"\nResult: {result}")
                     except (ValidationError, OperationError) as e:
