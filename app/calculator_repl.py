@@ -5,6 +5,11 @@ from app.exceptions import OperationError, ValidationError
 from app.history import AutoSaveObserver, LoggingObserver
 from app.operations import OperationFactory
 
+OPERATION_COMMANDS = [
+    'add', 'subtract', 'multiply', 'divide', 'power', 'root',
+    'modulus', 'int_divide', 'percent', 'abs_diff',
+]
+
 
 def calculator_repl():
     try:
@@ -20,7 +25,8 @@ def calculator_repl():
 
                 if command == 'help':
                     print("\nAvailable commands:")
-                    print("  add, subtract, multiply, divide, power, root - Perform calculations")
+                    print("  add, subtract, multiply, divide, power, root,")
+                    print("  modulus, int_divide, percent, abs_diff - Perform calculations")
                     print("  history - Show calculation history")
                     print("  clear - Clear calculation history")
                     print("  undo - Undo the last calculation")
@@ -84,7 +90,7 @@ def calculator_repl():
                         print(f"Error loading history: {e}")
                     continue
 
-                if command in ['add', 'subtract', 'multiply', 'divide', 'power', 'root']:
+                if command in OPERATION_COMMANDS:
                     try:
                         print("\nEnter numbers (or 'cancel' to abort):")
                         a = input("First number: ")
@@ -95,7 +101,6 @@ def calculator_repl():
                         if b.lower() == 'cancel':
                             print("Operation cancelled")
                             continue
-
 
                         operation = OperationFactory.create_operation(command)
                         calc.set_operation(operation)
